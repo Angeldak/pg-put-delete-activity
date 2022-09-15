@@ -26,6 +26,9 @@ router.post("/", (req, res) => {
 
   let queryText = `INSERT INTO "books" ("author", "title")
                    VALUES ($1, $2);`;
+
+  if (!req.body.author || !req.body.title) return res.sendStatus(400);
+
   pool
     .query(queryText, [newBook.author, newBook.title])
     .then((result) => {
@@ -45,7 +48,6 @@ router.put("/:bookid", (req, res) => {
   const bookid = req.params.bookid;
   const newRead = req.body.isRead;
   const queryText = `UPDATE "books" SET "isRead"=$1 WHERE "id"=$2`;
-
   pool
     .query(queryText, [newRead, bookid])
     .then((response) => {
@@ -60,10 +62,11 @@ router.put("/:bookid", (req, res) => {
 
 router.put("/:bookid/edit", (req, res) => {
   const bookid = req.params.bookid;
-  console.log("bookid :>> ", bookid);
   const updateInfo = req.body;
-  console.log("updateInfo :>> ", updateInfo);
   const queryText = `UPDATE "books" SET "author"=$1, "title"=$2 WHERE "id"=$3`;
+
+  // Checks if author and title are falsy for validation
+  if (!req.body.author || !req.body.title) return res.sendStatus(400);
 
   pool
     .query(queryText, [updateInfo.author, updateInfo.title, bookid])
