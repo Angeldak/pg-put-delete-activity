@@ -91,6 +91,9 @@ function handleSubmit() {
   let book = {};
   book.author = $("#author").val();
   book.title = $("#title").val();
+  // Check if either author or title inputs are falsy
+  if (!book.author || !book.title)
+    return alert("Please fill all input fields.");
   addBook(book);
 }
 
@@ -120,6 +123,8 @@ function addBook(bookToAdd) {
     })
       .then(function (response) {
         console.log("Response from server.", response);
+        $("#author").val("");
+        $("#title").val("");
         refreshBooks();
       })
       .catch(function (error) {
