@@ -44,10 +44,10 @@ router.post("/", (req, res) => {
 router.put("/:bookid", (req, res) => {
   const bookid = req.params.bookid;
   const newRead = req.body.isRead;
-  const queryText = `UPDATE "books" SET "isRead"=${newRead} WHERE "id"=${bookid}`;
+  const queryText = `UPDATE "books" SET "isRead"=$1 WHERE "id"=$2`;
 
   pool
-    .query(queryText)
+    .query(queryText, [newRead, bookid])
     .then((response) => {
       res.sendStatus(200);
       console.log("Updating book information");
@@ -58,15 +58,33 @@ router.put("/:bookid", (req, res) => {
     });
 });
 
+router.put("/:bookid/edit", (req, res) => {
+  const bookid = req.params.bookid;
+  console.log("bookid :>> ", bookid);
+  const updateInfo = req.body;
+  console.log("updateInfo :>> ", updateInfo);
+  const queryText = `UPDATE "books" SET "author"=$1, "title"=$2 WHERE "id"=$3`;
+
+  pool
+    .query(queryText, [updateInfo.author, updateInfo.title, bookid])
+    .then((response) => {
+      res.sendStatus(200);
+      console.log("Updating book information");
+    })
+    .catch((error) => {
+      console.log("error caught in book put :>> ", error);
+      res.sendStatus(500);
+    });
+});
 // TODO - DELETE
 // Removes a book to show that it has been read
 // Request must include a parameter indicating what book to update - the id
 router.delete("/:bookid", (req, res) => {
   const bookid = req.params.bookid;
-  const queryText = `DELETE FROM "books" WHERE "id"=${bookid}`;
+  const queryText = `DELETE FROM "books" WHERE "id"=$1`;
 
   pool
-    .query(queryText)
+    .query(queryText, [bookid])
     .then(() => {
       console.log("Deleting book at id:", bookid);
       res.sendStatus(204);

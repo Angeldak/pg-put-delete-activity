@@ -4,11 +4,34 @@ $(document).ready(function () {
   addClickHandlers();
 });
 
+let editMode = false;
+let editID = "";
+
 function addClickHandlers() {
   $("#submitBtn").on("click", handleSubmit);
   $("#bookShelf").on("click", ".delete-button", handleDelete);
   $("#bookShelf").on("click", ".read-button", handleRead);
+  $("#bookShelf").on("click", ".edit-button", handleEdit);
+  $("#cancelBtn").on("click", () => {
+    editMode = false;
+    editID = "";
+    refreshBooks();
+    $("#author").val("");
+    $("#title").val("");
+  });
   // TODO - Add code for edit & delete buttons
+}
+
+function handleEdit(event) {
+  editID = $(event.target).closest("tr").data("bookid");
+  editMode = true;
+  $("#author").val(
+    $($(event.target).closest("tr").children().siblings()[2]).text()
+  );
+  $("#title").val(
+    $($(event.target).closest("tr").children().siblings()[1]).text()
+  );
+  refreshBooks();
 }
 
 function handleDelete(event) {
@@ -54,7 +77,7 @@ function handleRead(event) {
 }
 
 function handleSubmit() {
-  console.log("Submit button clicked.");
+  // console.log("Submit button clicked."); //Commenting to remove console spam
   let book = {};
   book.author = $("#author").val();
   book.title = $("#title").val();
@@ -63,19 +86,38 @@ function handleSubmit() {
 
 // adds a book to the database
 function addBook(bookToAdd) {
-  $.ajax({
-    type: "POST",
-    url: "/books",
-    data: bookToAdd,
-  })
-    .then(function (response) {
-      console.log("Response from server.", response);
-      refreshBooks();
+  console.log("editID :>> ", editID);
+  if (editMode === true) {
+    $.ajax({
+      type: "PUT",
+      url: `/books/${editID}/edit`,
+      data: bookToAdd,
     })
-    .catch(function (error) {
-      console.log("Error in POST", error);
-      alert("Unable to add book at this time. Please try again later.");
-    });
+      .then(function (response) {
+        console.log("Response from server.", response);
+        refreshBooks();
+        $("#title").val("");
+        $("#author").val("");
+      })
+      .catch(function (error) {
+        console.log("Error in POST", error);
+        alert("Unable to add book at this time. Please try again later.");
+      });
+  } else {
+    $.ajax({
+      type: "POST",
+      url: "/books",
+      data: bookToAdd,
+    })
+      .then(function (response) {
+        console.log("Response from server.", response);
+        refreshBooks();
+      })
+      .catch(function (error) {
+        console.log("Error in POST", error);
+        alert("Unable to add book at this time. Please try again later.");
+      });
+  }
 }
 
 // refreshBooks will get all books from the server and render to page
@@ -85,7 +127,14 @@ function refreshBooks() {
     url: "/books",
   })
     .then(function (response) {
-      console.log(response);
+      // console.log(response);  Removing to stop spam in console
+      if (editMode === true) {
+        $("#addEditBook").text("Edit Current Book");
+        $(".cancel-controls").show();
+      } else {
+        $("#addEditBook").text("Add New Book");
+        $(".cancel-controls").hide();
+      }
       renderBooks(response);
     })
     .catch(function (error) {
@@ -112,6 +161,7 @@ function renderBooks(books) {
         <td>${book.title}</td>
         <td>${book.author}</td>
         <td><button class="read-button">Read/Unread</button></td>
+        <td><button class="edit-button">Edit</button></td>
         <td><button class="delete-button">Delete</button></td>
       </tr>
     `);

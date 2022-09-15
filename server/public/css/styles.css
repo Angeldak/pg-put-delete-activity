@@ -27,3 +27,7 @@ section {
 th {
   text-align: left;
 }
+
+.cancel-controls {
+  display: none;
+}
