@@ -1,6 +1,6 @@
 body {
   margin: 0;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
 }
 
 header {
@@ -20,12 +20,10 @@ main {
 
 section {
   background-color: linen;
-  padding: .5em;
+  padding: 0.5em;
   margin-bottom: 1em;
 }
 
 th {
   text-align: left;
 }
-
-
