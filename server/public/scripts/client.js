@@ -18,12 +18,38 @@ function handleDelete(event) {
     method: "DELETE",
     url: `/books/${bookid}`,
   })
-    .then((response) => {
+    .then((result) => {
       console.log("Deleted book at id:", bookid);
       refreshBooks();
     })
     .catch((error) => {
       console.log("error caught in delete book :>> ", error);
+    });
+}
+
+function handleRead(event) {
+  const bookid = $(event.target).closest("tr").data("bookid");
+  let readYet = $($(event.target).parent().siblings()[0]).text();
+
+  if (readYet === "Unread") {
+    readYet = true;
+  } else {
+    readYet = false;
+  }
+
+  $.ajax({
+    method: "PUT",
+    url: `/books/${bookid}`,
+    data: {
+      isRead: `${readYet}`,
+    },
+  })
+    .then((result) => {
+      console.log("Updating isRead to:", readYet);
+      refreshBooks();
+    })
+    .catch((error) => {
+      console.log("error caught in update read :>> ", error);
     });
 }
 
@@ -85,7 +111,7 @@ function renderBooks(books) {
         <td>${bookRead}</td>
         <td>${book.title}</td>
         <td>${book.author}</td>
-        <td><button class="read-button">Read</button></td>
+        <td><button class="read-button">Read/Unread</button></td>
         <td><button class="delete-button">Delete</button></td>
       </tr>
     `);
