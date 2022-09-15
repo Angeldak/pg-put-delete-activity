@@ -87,8 +87,6 @@ router.get("/sort/:column/:order", (req, res) => {
   const order = req.params.order.toUpperCase();
   let queryText = "";
 
-  console.log("column,order :>> ", column, order);
-
   if (column === "author") {
     queryText = `SELECT * FROM "books" ORDER BY "author"`;
   } else if (column === "title") {
@@ -100,8 +98,6 @@ router.get("/sort/:column/:order", (req, res) => {
   } else if (order === "ASC") {
     queryText += " ASC";
   } else return console.log("Error in order param");
-
-  console.log("queryText :>> ", queryText);
 
   pool
     .query(queryText)
