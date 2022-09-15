@@ -7,14 +7,34 @@ $(document).ready(function () {
 // Initiate "edit mode" items on page load
 let editMode = false;
 let editID = "";
+let sortOrder = "asc";
 
 function addClickHandlers() {
   $("#submitBtn").on("click", handleSubmit);
   $("#bookShelf").on("click", ".delete-button", handleDelete);
   $("#bookShelf").on("click", ".read-button", handleRead);
   $("#bookShelf").on("click", ".edit-button", handleEdit);
+  $("#bookSort").on("click", ".sort-field", handleSort);
   $("#cancelBtn").on("click", handleCancel);
   // TODO - Add code for edit & delete buttons
+}
+
+function handleSort(event) {
+  let column = $(event.target).text();
+
+  sortOrder === "desc" ? (sortOrder = "asc") : (sortOrder = "desc");
+
+  $.ajax({
+    type: "GET",
+    url: `/books/sort/${column}/${sortOrder}`,
+  })
+    .then(function (response) {
+      // console.log(response);  Removing to stop spam in console
+      renderBooks(response);
+    })
+    .catch(function (error) {
+      console.log("error in GET sort", error);
+    });
 }
 
 function handleCancel() {

@@ -60,6 +60,7 @@ router.put("/:bookid", (req, res) => {
     });
 });
 
+// PUT for updating record in Edit mode
 router.put("/:bookid/edit", (req, res) => {
   const bookid = req.params.bookid;
   const updateInfo = req.body;
@@ -79,6 +80,41 @@ router.put("/:bookid/edit", (req, res) => {
       res.sendStatus(500);
     });
 });
+
+// GET to sort data differently
+router.get("/sort/:column/:order", (req, res) => {
+  const column = req.params.column.toLowerCase();
+  const order = req.params.order.toUpperCase();
+  let queryText = "";
+
+  console.log("column,order :>> ", column, order);
+
+  if (column === "author") {
+    queryText = `SELECT * FROM "books" ORDER BY "author"`;
+  } else if (column === "title") {
+    queryText = `SELECT * FROM "books" ORDER BY "title"`;
+  } else return console.log("Error in column param");
+
+  if (order === "DESC") {
+    queryText += " DESC;";
+  } else if (order === "ASC") {
+    queryText += " ASC";
+  } else return console.log("Error in order param");
+
+  console.log("queryText :>> ", queryText);
+
+  pool
+    .query(queryText)
+    .then((result) => {
+      // Sends back the results in an object
+      res.send(result.rows);
+    })
+    .catch((error) => {
+      console.log("error getting books", error);
+      res.sendStatus(500);
+    });
+});
+
 // TODO - DELETE
 // Removes a book to show that it has been read
 // Request must include a parameter indicating what book to update - the id
