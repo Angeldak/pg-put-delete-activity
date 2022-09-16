@@ -183,21 +183,20 @@ function renderBooks(books) {
   for (let i = 0; i < books.length; i += 1) {
     let book = books[i];
     let bookRead = "";
+    let btnRead = "";
     // Checks if database shows current book is read and puts it on the DOM
-    if (book.isRead) {
-      bookRead = "Read";
-    } else {
-      bookRead = "Unread";
-    }
+    book.isRead ? (bookRead = "Read") : (bookRead = "Unread");
+    book.isRead ? (btnRead = "Unread") : (btnRead = "Read");
+
     // For each book, append a new row to our table
     $("#bookShelf").append(`
       <tr data-bookid=${book.id}>
         <td>${bookRead}</td>
         <td>${book.title}</td>
         <td>${book.author}</td>
-        <td><button class="read-button">Read/Unread</button></td>
-        <td><button class="edit-button">Edit</button></td>
-        <td><button class="delete-button">Delete</button></td>
+        <td><button class="read-button btn btn-outline-primary">${btnRead}</button></td>
+        <td><button class="edit-button btn btn-outline-secondary">Edit</button></td>
+        <td><button class="delete-button btn btn-outline-danger">Delete</button></td>
       </tr>
     `);
   }

@@ -19,6 +19,7 @@ main {
 }
 
 section {
+  border-radius: 10px;
   background-color: linen;
   padding: 0.5em;
   margin-bottom: 1em;
@@ -30,4 +31,7 @@ th {
 
 .cancel-controls {
   display: none;
+}
+button {
+  width: 5rem;
 }
