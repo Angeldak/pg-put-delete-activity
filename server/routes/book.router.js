@@ -89,15 +89,15 @@ router.get("/sort/:column/:order", (req, res) => {
 
   if (column === "author") {
     queryText = `SELECT * FROM "books" ORDER BY "author"`;
-  } else if (column === "title") {
+  } else {
     queryText = `SELECT * FROM "books" ORDER BY "title"`;
-  } else return console.log("Error in column param");
+  }
 
   if (order === "DESC") {
     queryText += " DESC;";
-  } else if (order === "ASC") {
+  } else {
     queryText += " ASC";
-  } else return console.log("Error in order param");
+  }
 
   pool
     .query(queryText)
